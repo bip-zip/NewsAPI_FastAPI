@@ -1,18 +1,16 @@
 from fastapi import FastAPI
-from models.users import *
-from tortoise.contrib.fastapi import register_tortoise
-app = FastAPI()
-
-@app.get("/")
-async def index():
-    return {"Good": "Feelings"}
+from core.config import settings
+from apis.pages.route_homepage import general_pages_router
 
 
-register_tortoise(
-    app,
-    db_url='sqlite://database.sqlite3',
-    modules= {'models':["models"]},
-    generate_schemas=True,
-    add_exception_handlers=True
-)
+def include_router(app):
+	app.include_router(general_pages_router)
 
+
+def start_application():
+	app = FastAPI(title=settings.PROJECT_NAME,version=settings.PROJECT_VERSION)
+	include_router(app)
+	return app 
+
+
+app = start_application()
